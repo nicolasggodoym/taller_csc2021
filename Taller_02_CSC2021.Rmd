@@ -1,5 +1,6 @@
 ---
-title: "Taller 01 - CSC 2021"
+title: "Taller 02 - CSC 2021"
+author: "Jan Dimter y Nicolás Godoy"
 output: learnr::tutorial
 runtime: shiny_prerendered
 date: "02-09-2021"

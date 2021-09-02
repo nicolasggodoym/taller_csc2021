@@ -9,6 +9,7 @@ date: "02-09-2021"
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 if (!require("pacman")) install.packages("pacman")
+if (!require("gradethis")) remotes::install_github("rstudio/gradethis",force=TRUE)
 library(pacman)
 pacman::p_load(tidyverse,
                haven,
@@ -18,9 +19,10 @@ pacman::p_load(tidyverse,
                plotly,
                sjmisc,
                sjlabelled,
-               learnr)
+               learnr,
+               gradethis)
 data <- read_sav("https://github.com/nicolasggodoym/taller_csc2021/raw/main/data/issp_2019.sav")
-
+gradethis::gradethis_setup()
 ```
 ## Introducción
 
@@ -51,9 +53,18 @@ pacman::p_load(tidyverse,
 ¡Muy bien! Ahora continuemos cargando los datos de ISSP 2019. Para ello, debes crear un objeto llamado `data` con la función `read_sav()` de la librería `haven`, para cargar el archivo issp_2019.sav ubicado en Github
 
 ```{r load_data, exercise=TRUE}
-data <- read_sav("https://github.com/nicolasggodoym/taller_csc2021/raw/main/data/issp_2019.sav")
-
+____ <- ________("https://github.com/nicolasggodoym/taller_csc2021/raw/main/data/issp_2019.sav")
 ```
+```{r load_data-hint-1}
+**Tip:** La función `read_sav()` nos permite leer archivos SPSS (.sav).
+```
+```{r load_data-solution}
+data <- read_sav("https://github.com/nicolasggodoym/taller_csc2021/raw/main/data/issp_2019.sav")
+```
+```{r load_data-code-check}
+grade_code()
+```
+
 
 ## Análisis del dataset
 
@@ -61,7 +72,13 @@ A continuación, haremos una revisión general de los datos cargados. Ocupa la f
 
 
 ```{r dim, exercise=TRUE}
+___(data)
+```
+```{r dim-solution}
 dim(data)
+```
+```{r dim-code-check}
+grade_code()
 ```
 
 Posteriormente, con la función `head()`, imprime las primeras 5 filas de data

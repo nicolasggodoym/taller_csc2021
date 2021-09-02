@@ -9,7 +9,6 @@ date: "02-09-2021"
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 if (!require("pacman")) install.packages("pacman")
-if (!require("learnr")) install.packages("learnr")
 library(pacman)
 pacman::p_load(tidyverse,
                haven,
@@ -23,7 +22,6 @@ pacman::p_load(tidyverse,
 data <- read_sav("https://github.com/nicolasggodoym/taller_csc2021/raw/main/data/issp_2019.sav")
 
 ```
-
 ## Introducción
 
 ¡Hola a todas y todos! El presente documento consta de un tutorial con que se busca repasar los contenidos revisados en el curso de **Ciencias Sociales Computacionales** dictado en 2021 por el profesor *Naim Bro*, con miras a la primera evaluación del ramo, que consiste en un control de código.
@@ -47,6 +45,7 @@ pacman::p_load(tidyverse,
                learnr)
 ```
 
+
 ## Carga de datos
 
 ¡Muy bien! Ahora continuemos cargando los datos de ISSP 2019. Para ello, debes crear un objeto llamado `data` con la función `read_sav()` de la librería `haven`, para cargar el archivo issp_2019.sav ubicado en Github
@@ -60,17 +59,20 @@ data <- read_sav("https://github.com/nicolasggodoym/taller_csc2021/raw/main/data
 
 A continuación, haremos una revisión general de los datos cargados. Ocupa la función `dim()` para obtener las dimensiones del dataframe
 
+
 ```{r dim, exercise=TRUE}
 dim(data)
 ```
 
 Posteriormente, con la función `head()`, imprime las primeras 5 filas de data
 
+
 ```{r head, exercise=TRUE}
 head(data, 5)
 ```
 
 Ahora imprime las columnas 10 a la 15
+
 
 ```{r print10_15, exercise=TRUE}
 data[,(10:15)]
@@ -86,6 +88,7 @@ Luego, emplearemos la función `filter()` de la librería `dplyr` para crear un 
 -   sexo
 -   edad
 -   conflicto, respectivamente
+
 
 ```{r filter_select, exercise=TRUE}
 issp <- data %>% 
@@ -111,17 +114,20 @@ issp <- data %>%
 
 ¡Muy bien! Lo que sigue es revisar las dimensiones (`dim()`) del nuevo conjunto de datos
 
+
 ```{r dim2, exercise=TRUE,exercise.setup = "prepare-issp"}
 dim(issp)
 ```
 
-Con la función `head()`, imprime las 10 primeras filas del nuevo set de datos
+Con la función `head()`, imprime las 10 primeras filas del nuevo set de datos.
+
 
 ```{r head2, exercise=TRUE,exercise.setup = "prepare-issp"}
 head(issp, 10)
 ```
 
-Ahora es momento de revisar los datatypes de cada una de las columnas. Emplea la función `str()` para revisar la estructura de los datos
+Ahora es momento de revisar los datatypes de cada una de las columnas. Emplea la función `str()` para revisar la estructura de los datos.
+
 
 ```{r str, exercise=TRUE,exercise.setup = "prepare-issp"}
 str(issp)
@@ -129,7 +135,8 @@ str(issp)
 
 ## Mutate
 
-Ahora, con la función `as_factor()` de la librería `haven`, transforma todas las variables de tipo dbl+lbl a variables de tipo `factor`, a excepción de `ess` y `edad`, que debes transformar a `numeric`. Emplea la función `mutate_at()` para realizar las transformaciones de manera conjunta
+Ahora, con la función `as_factor()` de la librería `haven`, transforma todas las variables de tipo dbl+lbl a variables de tipo `factor`, a excepción de `ess` y `edad`, que debes transformar a `numeric`. Emplea la función `mutate_at()` para realizar las transformaciones de manera conjunta.
+
 
 ```{r factor, exercise=TRUE,exercise.setup = "prepare-issp"}
 issp <- issp %>% 
@@ -150,7 +157,8 @@ issp <- data %>%
   mutate_at(vars(ess, edad), ~(as.numeric(.)))
 ```
 
-Emplea de nuevo la función `str()` para revisar las transformaciones
+Emplea de nuevo la función `str()` para revisar las transformaciones.
+
 
 ```{r str2, exercise=TRUE,exercise.setup = "prepare-issp2"}
 str(issp)
@@ -159,6 +167,7 @@ str(issp)
 ## Funciones frq() y descr()
 
 ¡Muy bien! Ahora emplea las funciones `frq()` y `descr()` de la librería `sjmisc` para explorar las variables categóricas y cuantitativas, respectivamente.
+
 
 ```{r frq_descr, exercise=TRUE,exercise.setup = "prepare-issp2"}
 frq(issp$clase_sub)
@@ -170,7 +179,8 @@ descr(issp$ess)
 descr(issp$edad)
 ```
 
-Ya estamos casi listas/os para trabajar. Lo siguiente es recodificar las variables a trabajar, antes de meter las manos en la masa. Empleemos la función `recode()` de la librería `car` para transformar en valores nulos (`NA`) aquellos valores que no aporten información relevante. Emplearemos la función `mutate()` para trabajar en conjunto y agilizar el trabajo
+Ya estamos casi listas/os para trabajar. Lo siguiente es recodificar las variables a trabajar, antes de meter las manos en la masa. Empleemos la función `recode()` de la librería `car` para transformar en valores nulos (`NA`) aquellos valores que no aporten información relevante. Emplearemos la función `mutate()` para trabajar en conjunto y agilizar el trabajo.
+
 
 ```{r recode, exercise=TRUE,exercise.setup = "prepare-issp2"}
 issp <- issp %>% 

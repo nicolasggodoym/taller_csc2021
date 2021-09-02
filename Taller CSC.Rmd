@@ -120,7 +120,7 @@ descr(data$edad)
 Ya estamos casi listas/os para trabajar. Lo siguiente es recodificar las variables a trabajar, antes de meter las manos en la masa. Empleemos la función `recode()` de la librería `car` para transformar en valores nulos (`NA`) aquellos valores que no aporten información relevante. Emplearemos la función `mutate()` para trabajar en conjunto y agilizar el trabajo. Las instrucciones de recodificación son las siguientes: 
 
 - clase_sub: -9 y -1 como NA. Luego, recodificar 1 = Clase baja, 2 = Clase trabajadora, 3, 4 y 5 como Clase media, 6 como Clase alta. 
-- region: -2 como NA. Luego 1 = Tarapaca, 2 = Antofagasta, 3 = Atacama, 4 = Coquimbo, 5 = Valparaiso, 6 = OHiggins, 7 = Maule, 8 = Biobio, 9 = La Araucania, 10 = Los Lagos, 11 = Aysen, 12 = Magallanes, 13 = Metropolitana, 14 = Los Rios, 15 = Arica y Parinacota, 16 = Nuble. 
+- region: -2 como NA. 
 - sexo: -9 como NA. Luego 1 = Hombre y 2 = Mujer. 
 - conflicto: -9 y -8 como NA. Luego, 1 = Muy fuerte, 2 = Fuerte, 3 = No muy fuerte, 4 = No hay. 
 
@@ -137,39 +137,7 @@ data <- data %>%
                                    'Clase trabajadora',
                                    'Clase media',
                                    'Clase alta')), 
-         region = car::recode(.$region, recodes = c("-2 = NA;
-                              1 = 'Tarapaca';
-                              2 = 'Antofagasta';
-                              3 = 'Atacama';
-                              4 = 'Coquimbo';
-                              5 = 'Valparaiso';
-                              6 = 'OHiggins';
-                              7 = 'Maule';
-                              8 = 'Biobio';
-                              9 = 'La Araucania';
-                              10 = 'Los Lagos';
-                              11 = 'Aisen';
-                              12 = 'Magallanes';
-                              13 = 'Metropolitana';
-                              14 = 'Los Rios';
-                              15 = 'Arica y Parinacota';
-                              16 = 'Nuble'"), 
-         as.factor = T, levels = c('Tarapaca',
-                              'Antofagasta',
-                              'Atacama',
-                              'Coquimbo',
-                              'Valparaiso',
-                              'OHiggins',
-                              'Maule',
-                              'Biobio',
-                              'La Araucania',
-                              'Los Lagos',
-                              'Aysen',
-                              'Magallanes',
-                              'Metropolitana',
-                              'Los Rios',
-                              'Arica y Parinacota',
-                              'Nuble')), 
+         region = car::recode(.$region, recodes = "-2 = NA"), 
          sexo = car::recode(.$sexo, recodes = c("-9 = NA;
                             1 = 'Hombre';
                             2 = 'Mujer'"),
@@ -195,22 +163,34 @@ frq(data$sexo)
 frq(data$conflicto)
 ```
 
-Ahora, ocupamos la función `case_when()` para que crear una nueva variable llamada `macrozona`, agrupando a la variable región en Norte (Arica y Parinacota, Tarapaca, Antofagasta y Atacama); Centro (Coquimbo, Valparaiso y Metropolitana); Centro sur (OHiggins, Maule, Nuble y Biobio); Sur (La Araucania, Los Lagos y Los Rios) Austral (Aysen y Magallanes). Recuerda usar el operador or (|), y englobar todo en `mutate()`
+Ahora, ocupamos la función `case_when()` para que crear una nueva variable llamada `macrozona`, agrupando a la variable región en Norte (15, 1, 2 y 3); Centro (4, 5 y 13); Centro sur (6, 7, 16 y 8); Sur (9, 10 y 14) Austral (11, 12). Recuerda usar el operador or (|), y englobar todo en `mutate()`
 
 ```{r case_when}
 data <- data %>% 
-  mutate(macrozona = case_when(region == 'Arica y Parinacota'|region == 'Tarapaca' | region == 'Antofagasta'| region == 'Atacama' ~ 'Norte',
-            region == 'Coquimbo' | region == 'Valparaiso' | region == 'Metropolitana' ~ 'Centro',
-            region == 'OHiggins' | region == 'Maule' | region == 'Nuble' | region == 'Biobio' ~ 'Centro sur',
-            region == 'La Araucania' | region == 'Los Lagos' | region == 'Los Rios' ~ 'Sur',
-                        region == 'Aisen' | region == 'Magallanes' ~ 'Austral'))
+  mutate(macrozona = case_when(region == 15|region == 1 | region == 2 | region == 3 ~ 'Norte',
+            region == 4 | region == 5 | region == 13 ~ 'Centro',
+            region == 6 | region == 7 | region == 16 | region == 8 ~ 'Centro sur',
+            region == 9 | region == 10 | region == 14 ~ 'Sur',
+                        region == 11 | region == 12 ~ 'Austral'))
 ```
+
+Ahora, transforma la variable macrozona en factor con la función `factor()`, estableciendo sus levels como Norte, Centro, Centro sur, Sur y Austral
+
+```{r factor_macrozona}
+data$macrozona <- factor(data$macrozona, levels = c('Norte',
+                                                    'Centro',
+                                                    'Centro sur',
+                                                    'Sur',
+                                                    'Austral'))
+```
+
 
 ¡Buen trabajo! Revisemos con `frq()`
 
 ```{r frq_case_when}
 frq(data$macrozona)
 ```
+
 
 
 

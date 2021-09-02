@@ -8,11 +8,23 @@ date: "02-09-2021"
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_chunk$set(exercise=TRUE)
 if (!require("pacman")) install.packages("pacman")
 if (!require("learnr")) install.packages("learnr")
-test1<-getwd()
+library(pacman)
+pacman::p_load(tidyverse,
+               haven,
+               dplyr, 
+               car,
+               ggplot2,
+               plotly,
+               sjmisc,
+               sjlabelled,
+               learnr)
+data <- read_sav("https://github.com/nicolasggodoym/taller_csc2021/raw/main/data/issp_2019.sav")
+
 ```
+
+## Introducción
 
 ¡Hola a todas y todos! El presente documento consta de un tutorial con que se busca repasar los contenidos revisados en el curso de **Ciencias Sociales Computacionales** dictado en 2021 por el profesor *Naim Bro*, con miras a la primera evaluación del ramo, que consiste en un control de código.
 
@@ -35,37 +47,36 @@ pacman::p_load(tidyverse,
                learnr)
 ```
 
-La función `setwd()` nos permite especificar cuál es nuestra ruta de trabajo. Asigna la siguiente ruta:
+## Carga de datos
 
-**"`r test1`"**
+¡Muy bien! Ahora continuemos cargando los datos de ISSP 2019. Para ello, debes crear un objeto llamado `data` con la función `read_sav()` de la librería `haven`, para cargar el archivo issp_2019.sav ubicado en Github
 
-```{r two-plus-two, exercise=TRUE}
+```{r load_data, exercise=TRUE}
+data <- read_sav("https://github.com/nicolasggodoym/taller_csc2021/raw/main/data/issp_2019.sav")
 
 ```
 
-¡Muy bien! Ahora continuemos cargando los datos de ISSP 2019. Para ello, debes crear un objeto llamado `data` con la función `read_sav()` de la librería `haven`, para cargar el archivo issp_2019.sav ubicado en la carpeta data
-
-```{r load_data}
-data <- read_sav("data/issp_2019.sav")
-```
+## Análisis del dataset
 
 A continuación, haremos una revisión general de los datos cargados. Ocupa la función `dim()` para obtener las dimensiones del dataframe
 
-```{r dim}
+```{r dim, exercise=TRUE}
 dim(data)
 ```
 
 Posteriormente, con la función `head()`, imprime las primeras 5 filas de data
 
-```{r head}
+```{r head, exercise=TRUE}
 head(data, 5)
 ```
 
 Ahora imprime las columnas 10 a la 15
 
-```{r print10_15}
+```{r print10_15, exercise=TRUE}
 data[,(10:15)]
 ```
+
+## Filtrado
 
 Luego, emplearemos la función `filter()` de la librería `dplyr` para crear un dataframe llamado data que sólo contenga los valores para Chile (CL) en la columna `c_alphan`. Después, con el operador pipe (`%>%`), emplea la función `select()` de la librería `dplyr` para seleccionar las variables v61, TOPBOT, CL_REG, AGE, SEX y v38. A su vez, renómbralas como
 
@@ -76,8 +87,19 @@ Luego, emplearemos la función `filter()` de la librería `dplyr` para crear un 
 -   edad
 -   conflicto, respectivamente
 
-```{r filter_select}
-data <- data %>% 
+```{r filter_select, exercise=TRUE}
+issp <- data %>% 
+  filter(c_alphan == "CL") %>% 
+  select(clase_sub = v61,
+         ess = TOPBOT,
+         region = CL_REG,
+         edad = AGE,
+         sexo = SEX,
+         conflicto = v38)
+```
+
+```{r prepare-issp, include=FALSE}
+issp <- data %>% 
   filter(c_alphan == "CL") %>% 
   select(clase_sub = v61,
          ess = TOPBOT,
@@ -89,52 +111,69 @@ data <- data %>%
 
 ¡Muy bien! Lo que sigue es revisar las dimensiones (`dim()`) del nuevo conjunto de datos
 
-```{r dim2}
-dim(data)
+```{r dim2, exercise=TRUE,exercise.setup = "prepare-issp"}
+dim(issp)
 ```
 
 Con la función `head()`, imprime las 10 primeras filas del nuevo set de datos
 
-```{r head2}
-head(data, 10)
+```{r head2, exercise=TRUE,exercise.setup = "prepare-issp"}
+head(issp, 10)
 ```
 
 Ahora es momento de revisar los datatypes de cada una de las columnas. Emplea la función `str()` para revisar la estructura de los datos
 
-```{r str}
-str(data)
+```{r str, exercise=TRUE,exercise.setup = "prepare-issp"}
+str(issp)
 ```
+
+## Mutate
 
 Ahora, con la función `as_factor()` de la librería `haven`, transforma todas las variables de tipo dbl+lbl a variables de tipo `factor`, a excepción de `ess` y `edad`, que debes transformar a `numeric`. Emplea la función `mutate_at()` para realizar las transformaciones de manera conjunta
 
-```{r factor}
-data <- data %>% 
+```{r factor, exercise=TRUE,exercise.setup = "prepare-issp"}
+issp <- issp %>% 
+  mutate_at(vars(clase_sub, region, sexo, conflicto), ~(as_factor(.))) %>% 
+  mutate_at(vars(ess, edad), ~(as.numeric(.)))
+```
+
+```{r prepare-issp2,include=FALSE}
+issp <- data %>% 
+  filter(c_alphan == "CL") %>% 
+  select(clase_sub = v61,
+         ess = TOPBOT,
+         region = CL_REG,
+         edad = AGE,
+         sexo = SEX,
+         conflicto = v38) %>% 
   mutate_at(vars(clase_sub, region, sexo, conflicto), ~(as_factor(.))) %>% 
   mutate_at(vars(ess, edad), ~(as.numeric(.)))
 ```
 
 Emplea de nuevo la función `str()` para revisar las transformaciones
 
-```{r str2}
-str(data)
+```{r str2, exercise=TRUE,exercise.setup = "prepare-issp2"}
+str(issp)
 ```
+
+## Funciones frq() y descr()
 
 ¡Muy bien! Ahora emplea las funciones `frq()` y `descr()` de la librería `sjmisc` para explorar las variables categóricas y cuantitativas, respectivamente.
 
-```{r frq_descr}
-frq(data$clase_sub)
-frq(data$region)
-frq(data$sexo)
-frq(data$conflicto)
+```{r frq_descr, exercise=TRUE,exercise.setup = "prepare-issp2"}
+frq(issp$clase_sub)
+frq(issp$region)
+frq(issp$sexo)
+frq(issp$conflicto)
 
-descr(data$ess)
-descr(data$edad)
+descr(issp$ess)
+descr(issp$edad)
 ```
 
 Ya estamos casi listas/os para trabajar. Lo siguiente es recodificar las variables a trabajar, antes de meter las manos en la masa. Empleemos la función `recode()` de la librería `car` para transformar en valores nulos (`NA`) aquellos valores que no aporten información relevante. Emplearemos la función `mutate()` para trabajar en conjunto y agilizar el trabajo
 
-```{r recode}
-data <- data %>% 
+```{r recode, exercise=TRUE,exercise.setup = "prepare-issp2"}
+issp <- issp %>% 
   mutate(clase_sub = car::recode(.$clase_sub, recodes = "c(-9,-1) = NA"),
          region = car::recode(.$region, recodes = "-2 = NA"),
          sexo = car::recode(.$sexo, recodes = "-9 = NA"),

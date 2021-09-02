@@ -191,7 +191,29 @@ data$macrozona <- factor(data$macrozona, levels = c('Norte',
 frq(data$macrozona)
 ```
 
+¡Realicemos algunos cálculos! Calculemos la media de edad para cada macrozona. Para ello, emplearemos las funciones `group_by()` y `summarise()`. ¡No olvides los pipes!
 
+```{r edad_macrozona}
+data %>% 
+  group_by(macrozona) %>% 
+  summarise(Edad = mean(edad))
+```
 
+¡Excelente! Ahora la media del Estatus social subjetivo y la edad según sexo. ¡No olvides remover los valores nulos del cálculo!
 
+```{r ess_sex}
+data %>% 
+  group_by(sexo) %>% 
+  summarise("Estatus social subjetivo" = mean(ess, na.rm=T),
+            Edad = mean(edad))
+```
 
+Ahora lo haremos algo más complejo. Agrupando por Clase social subjetiva, revisemos las frecuencias de la percepción de conflicto. Para ello, emplearemos `group_by()` y `frq()`
+
+```{r conflict_class}
+data %>% 
+  group_by(clase_sub) %>% 
+  frq(conflicto)
+```
+
+¡Gran trabajo!

@@ -85,19 +85,37 @@ Posteriormente, con la función `head()`, imprime las primeras 5 filas de data
 
 
 ```{r head, exercise=TRUE}
+____(data, _)
+```
+```{r head-hint-1}
+**Tip:** El primer argumento de head() indica la cantidad de filas que deseamos imprimir.
+```
+```{r head-solution}
 head(data, 5)
+```
+```{r head-code-check}
+grade_code()
 ```
 
 Ahora imprime las columnas 10 a la 15
 
 
 ```{r print10_15, exercise=TRUE}
-data[,(10:15)]
+data__(10:15)_
+```
+```{r print10_15-hint-1}
+**Tip:** ¡Recuerda los corchetes ([])! Además, para indicar que nos referimos a columnas, debemos agregar una coma (,) luego del corchete izquierdo; mientras que, para referirnos a filas, la coma (,) debe ir antes del corchete derecho.
+```
+```{r print10_15-solution}
+data[, (10:15)]
+```
+```{r print10_15-code-check}
+grade_code()
 ```
 
 ## Filtrado
 
-Luego, emplearemos la función `filter()` de la librería `dplyr` para crear un dataframe llamado data que sólo contenga los valores para Chile (CL) en la columna `c_alphan`. Después, con el operador pipe (`%>%`), emplea la función `select()` de la librería `dplyr` para seleccionar las variables v61, TOPBOT, CL_REG, AGE, SEX y v38. A su vez, renómbralas como
+Luego, emplearemos la función `filter()` de la librería `dplyr` para crear un dataframe llamado issp que sólo contenga los valores para Chile en la columna `c_alphan`. Después, con el operador pipe (`%>%`), emplea la función `select()` de la librería `dplyr` para seleccionar las variables v61, TOPBOT, CL_REG, AGE, SEX y v38. A su vez, renómbralas como
 
 -   clase_sub
 -   ess
@@ -109,6 +127,19 @@ Luego, emplearemos la función `filter()` de la librería `dplyr` para crear un 
 
 ```{r filter_select, exercise=TRUE}
 issp <- data %>% 
+  ______(c_alphan __ "CL") %>% 
+  select(_________ = v61,
+         ___ = TOPBOT,
+         ______ = CL_REG,
+         ____ = AGE,
+         ____ = SEX,
+         _________ = v38)
+```
+```{r filter_select-hint-1}
+**Tip:** Recuerda que, para R, el asignador igual (=) es lo mismo que la flecha (<-) que utilizamos para crear objetos o vectores. Para señalar una igualación, debemos emplear doble signo igual (==).
+```
+```{r filter_select-solution}
+issp <- data %>% 
   filter(c_alphan == "CL") %>% 
   select(clase_sub = v61,
          ess = TOPBOT,
@@ -116,6 +147,9 @@ issp <- data %>%
          edad = AGE,
          sexo = SEX,
          conflicto = v38)
+```
+```{r filter_select-code-check}
+grade_code()
 ```
 
 ```{r prepare-issp, include=FALSE}
@@ -133,21 +167,42 @@ issp <- data %>%
 
 
 ```{r dim2, exercise=TRUE,exercise.setup = "prepare-issp"}
+___(issp)
+```
+```{r dim2-solution}
 dim(issp)
+```
+```{r dim2-code-check}
+grade_code()
 ```
 
 Con la función `head()`, imprime las 10 primeras filas del nuevo set de datos.
 
 
 ```{r head2, exercise=TRUE,exercise.setup = "prepare-issp"}
+head(_____ __)
+```
+```{r head2-solution}
 head(issp, 10)
+```
+```{r head2-code-check}
+grade_code()
 ```
 
 Ahora es momento de revisar los datatypes de cada una de las columnas. Emplea la función `str()` para revisar la estructura de los datos.
 
 
 ```{r str, exercise=TRUE,exercise.setup = "prepare-issp"}
+str(____)
+```
+```{r str-hint-1}
+**Tip:** La función str() tiene la misma estructura que la función dim().
+```
+```{r str-solution}
 str(issp)
+```
+```{r str-code-check}
+grade_code()
 ```
 
 ## Mutate
@@ -156,9 +211,20 @@ Ahora, con la función `as_factor()` de la librería `haven`, transforma todas l
 
 
 ```{r factor, exercise=TRUE,exercise.setup = "prepare-issp"}
+issp <- issp ___ 
+  mutate_at(vars(_________, ______, ____, _________), ~(as_factor(.))) %>% 
+  mutate_at(____(ess, edad), _(as._______(_)))
+```
+```{r factor-hint-1}
+**Tip:** ¡No olvides usar pipes (%>%)! Al trabajar con mutate_at(), podemos asignar la misma función para un conjunto de variables a la vez. El argumento vars() define las columnas por trabajar, mientras que luego de la virgulilla (~) presentamos la función a aplicar. Usamos punto (.) para hacer referencia a las variables especificadas en vars(). 
+```
+```{r factor-solution}
 issp <- issp %>% 
   mutate_at(vars(clase_sub, region, sexo, conflicto), ~(as_factor(.))) %>% 
   mutate_at(vars(ess, edad), ~(as.numeric(.)))
+```
+```{r factor-code-check}
+grade_code()
 ```
 
 ```{r prepare-issp2,include=FALSE}
@@ -178,7 +244,13 @@ Emplea de nuevo la función `str()` para revisar las transformaciones.
 
 
 ```{r str2, exercise=TRUE,exercise.setup = "prepare-issp2"}
+___(issp)
+```
+```{r str2-solution}
 str(issp)
+```
+```{r str2-code-check}
+grade_code()
 ```
 
 ## Funciones frq() y descr()
@@ -187,6 +259,18 @@ str(issp)
 
 
 ```{r frq_descr, exercise=TRUE,exercise.setup = "prepare-issp2"}
+frq(issp$_________)
+frq(issp$______)
+frq(issp$____)
+frq(issp$_________)
+
+descr(issp$___)
+descr(issp$____)
+```
+```{r frq_descr-hint-1}
+**Tip:** Las variables categóricas son clase_sub, region, sexo y conflicto. Las cuantitativas, por su parte, son ess y edad.
+```
+```{r frq_descr-solution}
 frq(issp$clase_sub)
 frq(issp$region)
 frq(issp$sexo)
@@ -195,14 +279,30 @@ frq(issp$conflicto)
 descr(issp$ess)
 descr(issp$edad)
 ```
+```{r frq_descr-code-check}
+grade_code()
+```
 
 Ya estamos casi listas/os para trabajar. Lo siguiente es recodificar las variables a trabajar, antes de meter las manos en la masa. Empleemos la función `recode()` de la librería `car` para transformar en valores nulos (`NA`) aquellos valores que no aporten información relevante. Emplearemos la función `mutate()` para trabajar en conjunto y agilizar el trabajo.
 
 
 ```{r recode, exercise=TRUE,exercise.setup = "prepare-issp2"}
+issp <- ____ ___ 
+  ______(clase_sub = car::______(.$clase_sub, recodes = "c(-9,-1) = __"),
+         ______ = car::recode(.$region, _______ = "-2 = NA"),
+         sexo = _____recode(______, _______ = -9 _ ___),
+         conflicto _ ___________(___________, ______ = "_(-9,-8) = NA"))
+```
+```{r recode-hint-1}
+**Tip:** ¡No olvides los pipes (%>%)! Recuerda que, en la función mutate(), los puntos (.) indican recursividad de un elemento anteriormente especificado; en este caso, el dataframe issp. ¡Ten cuidado con las comillas!
+```
+```{r recode-solution}
 issp <- issp %>% 
   mutate(clase_sub = car::recode(.$clase_sub, recodes = "c(-9,-1) = NA"),
          region = car::recode(.$region, recodes = "-2 = NA"),
          sexo = car::recode(.$sexo, recodes = "-9 = NA"),
          conflicto = car::recode(.$conflicto, recodes = "c(-9,-8) = NA"))
+```
+```{r recode-code-check}
+grade_code()
 ```
